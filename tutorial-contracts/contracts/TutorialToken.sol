@@ -2,38 +2,54 @@
 
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "hardhat/console.sol";
 
-contract TutorialToken is ERC721 {
-    constructor() ERC721("MyCollectible", "MCO") {
-    }
+contract TutorialToken is ERC721Enumerable, Ownable {
+  uint256 private _tokenId;
+  bytes32 private merkleRoot;
+  bool private preSale;
+  bool private publicSale;
 
-    function preMint() external {
-      uint tokenId = 0;
-      ERC721._safeMint(msg.sender, tokenId);
-    }
+  constructor() ERC721("MyCollectible", "MCO") {
+    _tokenId = 1;
+    preSale = false;
+    publicSale = false;
+  }
 
-    function mint() external {
-      console.log("mint from %s", msg.sender);
-      uint tokenId = 1;
-      ERC721._safeMint(msg.sender, tokenId);
-    }
+  function setMerkleRoot(bytes32 _merkleRoot) external onlyOwner {
+    console.logBytes32( _merkleRoot);
+    merkleRoot = _merkleRoot;
+  }
 
-    // function balanceOf(address owner) public view override returns (uint256) {
-    //   console.log("balanceOf from %s", msg.sender);
-    //   console.log("balanceOf from %s", owner);
-    //   require(owner != address(0), "ERC721: address zero is not a valid owner");
-    //   uint256 balance = ERC721.balanceOf(msg.sender);
-    //   console.log("balanceOf %s", balance);
-    //   return balance;
-    // }
+  function setPreSale(bool _preSale) external onlyOwner {
+    console.log("setPreSale %s", _preSale);
+    preSale = _preSale;
+  }
 
-    function hoge() public view returns (uint256) {
-      console.log("hoge from %s", msg.sender);
-      // uint256 balance = ERC721.balanceOf(owner);
-      // console.log("hoge %s", balance);
-      // return balance;
-      return 1;
-    }
+  function setPublicSale(bool _publicSale) external onlyOwner {
+    console.log("setPublicSale %s", _publicSale);
+    publicSale = _publicSale;
+  }
+
+  function preMint(bytes32[] calldata proof) external returns (uint256) {
+    require(preSale, "preSale is not active.");
+    bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(msg.sender))));
+    require(MerkleProof.verify(proof, merkleRoot, leaf), "MerkleDistributor: Invalid proof.");
+    uint256 nextTokenId = _tokenId++;
+    console.log("next tokenId %s", nextTokenId);
+    ERC721._safeMint(msg.sender, nextTokenId);
+    return nextTokenId;
+  }
+
+  function mint() external returns (uint256) {
+    require(publicSale, "publicSale is not active.");
+    console.log("mint from %s", msg.sender);
+    uint256 nextTokenId = _tokenId++;
+    console.log("next tokenId %s", nextTokenId);
+    ERC721._safeMint(msg.sender, nextTokenId);
+    return nextTokenId;
+  }
 }
