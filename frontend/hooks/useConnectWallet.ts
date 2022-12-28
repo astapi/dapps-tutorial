@@ -16,7 +16,7 @@ export const useConnectWallet = () => {
         await provider.send('eth_requestAccounts', []);
         const signer = provider.getSigner();
         const userAddress = await signer.getAddress();
-        console.log(userAddress);
+        return userAddress;
       } catch (error) {
         console.log('Error connecting to metamask', error);
       }

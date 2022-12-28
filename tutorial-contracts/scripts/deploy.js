@@ -22,8 +22,8 @@ async function main() {
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  const Token = await ethers.getContractFactory("TutorialToken");
-  const token = await Token.deploy();
+  const TutorialToken = await ethers.getContractFactory("TutorialToken");
+  const token = await TutorialToken.deploy();
   await token.deployed();
 
   console.log("TutorialToken address:", token.address);
@@ -42,10 +42,10 @@ function saveFrontendFiles(token) {
 
   fs.writeFileSync(
     path.join(contractsDir, "contract-address.json"),
-    JSON.stringify({ Token: token.address }, undefined, 2)
+    JSON.stringify({ TutorialToken: token.address }, undefined, 2)
   );
 
-  const TokenArtifact = artifacts.readArtifactSync("Token");
+  const TokenArtifact = artifacts.readArtifactSync("TutorialToken");
 
   fs.writeFileSync(
     path.join(contractsDir, "TutorialToken.json"),

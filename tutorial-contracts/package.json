@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "deploy": "hardhat run scripts/deploy.js",
+    "deploy": "hardhat run --network localhost scripts/deploy.js",
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "runnode": "hardhat node"
+    "runnode": "hardhat node",
+    "setPreSale": "hardhat setPreSale --network localhost --pre-sale",
+    "setPublicSale": "hardhat setPublicSale --network localhost --public-sale",
+    "setMerkleRoot": "hardhat setMerkleRoot --network localhost"
   },
   "license": "MIT",
   "devDependencies": {
@@ -17,16 +20,22 @@
     "@nomicfoundation/hardhat-toolbox": "^1.0.1",
     "@nomiclabs/hardhat-ethers": "^2.0.0",
     "@nomiclabs/hardhat-etherscan": "^3.0.0",
+    "@openzeppelin/merkle-tree": "^1.0.1",
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.1",
     "chai": "^4.2.0",
     "ethers": "^5.4.7",
     "hardhat": "^2.11.0",
     "hardhat-gas-reporter": "^1.0.8",
-    "solidity-coverage": "^0.7.21"
+    "solidity-coverage": "^0.7.21",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.0",
     "@typechain/ethers-v5": "^10.1.0",
     "@typechain/hardhat": "^6.1.2",
+    "firebase-admin": "^11.4.1",
     "typechain": "^8.1.0"
   }
 }
